@@ -13,7 +13,7 @@ Before you begin, ensure you have met the following requirements:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/iArchitSharma/caching-proxy.git
+   git clone https://github.com/Rana-Saurabh/ProxyServer.git
    cd caching-proxy
    ```
 
@@ -29,7 +29,7 @@ Before you begin, ensure you have met the following requirements:
 To start the caching proxy server, run the following command:
 
 ```bash
-node ./index.js start --port <number> --origin <url>
+node ./index.js start --port <number> --origin <Main Server ip with port>
 ```
 
 - `--port`: The port on which the caching proxy server will run.
@@ -40,8 +40,11 @@ Example:
 ```bash
 node ./index.js start --port 3000 --origin http://dummyjson.com
 ```
-
-In this example, the server will start on port `3000` and forward requests to `http://dummyjson.com`.
+start python server on same or other machine at diffrent port
+```bash
+python -m http.server 8088
+```
+In this example, the Node server will start on port `3000` and forward requests to `http://dummyjson.com`.
 
 ### Clearing the Cache
 
@@ -51,5 +54,7 @@ You can clear the cache by running the following command:
 node ./index.js clear-cache
 ```
 
+
+Example 
 ## CC
 https://roadmap.sh/projects/caching-server
