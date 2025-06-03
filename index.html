@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Caching Proxy Server Monitor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 15px;
+    }
+    h1 {
+      color: #007acc;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #007acc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Caching Proxy Server Monitor</h1>
+
+  <button onclick="clearCache()">Clear Cache</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Resource / Action</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="logsBody">
+      <tr><td colspan="3">Loading logs...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/logs');
+        const logs = await res.json();
+        const tbody = document.getElementById('logsBody');
+        if (logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">No logs yet</td></tr>';
+          return;
+        }
+        tbody.innerHTML = '';
+        logs.reverse().forEach(log => {
+          let resource = log.url || log.action || 'Unknown';
+          let status = log.cacheStatus || log.status || '';
+          let row = `<tr>
+              <td>${new Date(log.timestamp || log.time).toLocaleString()}</td>
+              <td>${resource}</td>
+              <td style="color:${status === 'HIT' ? 'green' : 'orange'};">${status}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      } catch (err) {
+        console.error('Failed to fetch logs:', err);
+      }
+    }
+
+    async function clearCache() {
+      try {
+        await fetch('/clear-cache', { method: 'POST' });
+        alert('Cache cleared!');
+        fetchLogs();
+      } catch (err) {
+        alert('Failed to clear cache');
+      }
+    }
+
+    // Initial fetch and auto-refresh every 5 seconds
+    fetchLogs();
+    setInterval(fetchLogs, 5000);
+  </script>
+</body>
+</html>
